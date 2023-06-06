@@ -6,97 +6,97 @@ A Sales analysis project of a fictitious gourmet food supplier - NORTHWIND TRADE
 This a sales analytics challenge organized by Maven Analytics, below is the challenge objective:
 For the Maven Northwind Challenge, you'll be working as a BI Developer for Northwind Traders, a global import and export company that specializes in supplying high-quality gourmet food products to restaurants, cafes, and specialty food retailers around the world.
 As part of your role, you've been tasked with building a top-level KPI dashboard for the executive team. Its purpose should be to allow them to quickly understand the company's performance in key areas, including:
-•	Sales trends
-•	Product performance
-•	Key customers
-•	Shipping costs
+-	Sales trends
+-	Product performance
+-	Key customers
+-	Shipping costs
 The dashboard should be built to evolve and accommodate new data over time, but you've been encouraged by your manager to have insights & recommendations ready to share with the VPs. This is your chance to impress!
 
 ## About the Dataset
 It is a sales & order data for Northwind Traders, a fictitious gourmet food supplier, including information on customers, products, orders, shippers, and employees. The dataset can be downloaded [here](https://maven-datasets.s3.amazonaws.com/Northwind+Traders/Northwind+Traders.zip)
 
 ## Skills Demonstrated
-•	Data cleaning and transformation
-•	Data modelling
-•	Data visualization
-•	DAX measures
-•	Parameters
-•	Reporting
+-	Data cleaning and transformation
+-	Data modelling
+-	Data visualization
+-	DAX measures
+-	Parameters
+-	Reporting
 
 ## Data Transformation and Cleaning
 Data cleaning and transformation was done in Power Query editor and following steps were taken:
-•	Removed duplicate rows in the _orders_ tables.
-•	Set columns to the right data types.
-•	Merged the _order details_, orders and _customers_ tables using the **OrderID** and **CustomerID** columns to get a comprehensive _new order details_ table.
-•	Merged the _products_ and _categories_ tables using the **ProductID** column to get a new _product table_ containing all products details and their category details.
+-	Removed duplicate rows in the _orders_ tables.
+-	Set columns to the right data types.
+-	Merged the _order details_, orders and _customers_ tables using the **OrderID** and **CustomerID** columns to get a comprehensive _new order details_ table.
+-	Merged the _products_ and _categories_ tables using the **ProductID** column to get a new _product table_ containing all products details and their category details.
 
 ## Data Modelling
 Below is a picture of the data model along with the Dax measures table as well as the parameters:
 ![MODEL](https://github.com/ChrisDataGuy/MAVEN-NORTHWIND-CHALLENGE/assets/109347195/8211dbcc-be17-4b1f-b574-140ca9c817fc)
 
 ## DAX Measures
-•	Calendar Table was created with the DAX: 
+-	Calendar Table was created with the DAX: 
 `Calendar Table = CALENDAR(MIN(New_order_table[orderDate]),MAX(New_order_table[shippedDate]))`
 The FORMAT, MONTH and WEEDAY DAX formulas were used to get the Year, Quarter, Month, Month Number, Day and Day number of the Calendar table.
-•	Total Orders: Calculates the total number of orders generated.
+-	Total Orders: Calculates the total number of orders generated.
 `Total orders = DISTINCTCOUNT(New_order_table[orderID])`
-•	Total Sales: Calculates the total amount of sales generated.
+-	Total Sales: Calculates the total amount of sales generated.
 `Total Sales = SUM(New_order_table[Sales])`
-•	Freight: Calculates the total of shipment cost
+-	Freight: Calculates the total of shipment cost
 `Freight = SUM(New_order_table[freight])`
-•	Revenue: Calculates the total revenue generated from sales.
+-	Revenue: Calculates the total revenue generated from sales.
 `Revenue = [Total Sales] - [Freight]`
-•	% Revenue: To calculate the % of total sales that were revenue
+-	% Revenue: To calculate the % of total sales that were revenue
 `% Revenue = DIVIDE([Revenue], [Total Sales], 0)`
-•	Product Unit sold: Calculates the total product units sold (quantity)
+-	Product Unit sold: Calculates the total product units sold (quantity)
 `Product Units Sold = SUM(New_order_table[quantity])`
-•	Total Active Products: Calculates the total number of products that are currently active.
+-	Total Active Products: Calculates the total number of products that are currently active.
 `Total Active Products = DISTINCTCOUNT(New_order_table[productID]) - SUM(Products_table[discontinued])`
-•	Total Customers: Calculates the total of customers/business partners
+-	Total Customers: Calculates the total of customers/business partners
 `Total Customers = DISTINCTCOUNT(New_order_table[CustomerID])`
-•	Average Order Value: Calculates the average value per order
+-	Average Order Value: Calculates the average value per order
 `AOV = [Total Sales] / [Total orders]`
-•	Average Delivery time (days): Calculates the average delivery time of an order in days
+-	Average Delivery time (days): Calculates the average delivery time of an order in days
 `Average Delivery days = AVERAGE(New_order_table[Delivery time (days)])`
-•	Average fulfillment cost per order: Calculates the average shipment cost per order
+-	Average fulfillment cost per order: Calculates the average shipment cost per order
 `Average Fulfillment cost per Order = [Freight] / [Total orders]`
-•	Average order delay time in days: Calculates the average delay time in days, this is based on a calculated column called Shipment delay days which checks for the difference between when an order was expected and when it was finally delivered, returns 0 for values less than or equals to zero.
+-	Average order delay time in days: Calculates the average delay time in days, this is based on a calculated column called Shipment delay days which checks for the difference between when an order was expected and when it was finally delivered, returns 0 for values less than or equals to zero.
 `Average Order Delay days = AVERAGE(New_order_table[Shipment delay (days)])`
-•	Average revenue per order: Calculates the average revenue per order, that is total sales on the order minus the shipment cost.
+-	Average revenue per order: Calculates the average revenue per order, that is total sales on the order minus the shipment cost.
 `Average Revenue per Order = [Revenue] / [Total orders]`
-•	Average sales per order: Calculates the average sales generated per order.
+-	Average sales per order: Calculates the average sales generated per order.
 `Average Sales per Order = [Total Sales] / [Total orders]`
-•	% Sales contribution by country: This calculates the % sales contribution for each country.
+-	% Sales contribution by country: This calculates the % sales contribution for each country.
 `% Sales Contribution = DIVIDE([Total Sales], CALCULATE([Total Sales], ALLSELECTED(New_order_table[country])))`
-•	Customer ranking by revenue: Ranks customers based on the revenue they generated. This helped to filter for the top 3 customers by country.
+-	Customer ranking by revenue: Ranks customers based on the revenue they generated. This helped to filter for the top 3 customers by country.
 `Customer Rank by revenue = RANKX(ALLSELECTED(New_order_table[CompanyName]), [Revenue])`
-•	Team Laura Callahan: Calculates the total sales of sales manager – Laura Callahan and all sales representatives that reports to her in the US.
+-	Team Laura Callahan: Calculates the total sales of sales manager – Laura Callahan and all sales representatives that reports to her in the US.
 `Team Laura Callahan = 
 (CALCULATE([Total Sales], New_order_table[EmployeeID] = 8) + 
 [Nancy Sales] +
 [Janet Sales] +
 [Margaret Sales])`
-•	Team Steven Buchanan: Calculates the total sales of sales manager – Steven Buchanan and all sales representatives that reports to him in the UK.
+-	Team Steven Buchanan: Calculates the total sales of sales manager – Steven Buchanan and all sales representatives that reports to him in the UK.
 `Team Steven Buchanan = 
 CALCULATE([Total Sales], New_order_table[EmployeeID] = 5) +
 [Michael Sales] +
 [Robert Sales] +
 [Anne Sales]`
-•	% Team Laura Sales: Calculates the % contribution to total sales of Laura Callahan and all sales representatives that reports to her in the US.
+-	% Team Laura Sales: Calculates the % contribution to total sales of Laura Callahan and all sales representatives that reports to her in the US.
 `% Team laura = DIVIDE([Team Laura Callahan], [Total Sales], 0)`
-•	% Team Steven Sales: Calculates the % contribution to total sales of Steven Buchanan and all sales representatives that reports to him in the UK.
+-	% Team Steven Sales: Calculates the % contribution to total sales of Steven Buchanan and all sales representatives that reports to him in the UK.
 `% Team Steven = DIVIDE([Team Steven Buchanan], [Total Sales], 0)`
-•	Anne Sales: Calculates the total sales for the Sales representative – Anne Dodsworth
+-	Anne Sales: Calculates the total sales for the Sales representative – Anne Dodsworth
 `Anne Sales = CALCULATE([Total Sales], New_order_table[EmployeeID] = 9)`
-•	Janet Sales: Calculates the total sales of the sales representative – Janet Leverling
+-	Janet Sales: Calculates the total sales of the sales representative – Janet Leverling
 `Janet Sales = CALCULATE([Total Sales], New_order_table[EmployeeID] = 3)`
-•	Margaret Sales: Calculates the total sales of the sales representative – Margaret Peacock
+-	Margaret Sales: Calculates the total sales of the sales representative – Margaret Peacock
 `Margaret Sales = CALCULATE([Total Sales], New_order_table[EmployeeID] = 4)`
-•	Michael Sales: Calculates the total sales of the sales representative – Michael Suyama
+-	Michael Sales: Calculates the total sales of the sales representative – Michael Suyama
 `Michael Sales = CALCULATE([Total Sales], New_order_table[EmployeeID] = 6)`
-•	Nancy Sales: Calculates the total sales of the sales representative – Nancy Davolio
+-	Nancy Sales: Calculates the total sales of the sales representative – Nancy Davolio
 `Nancy Sales = CALCULATE([Total Sales], New_order_table[EmployeeID] = 1)`
-•	Robert Sales: Calculates the total sales of the sales representative – Robert King
+-	Robert Sales: Calculates the total sales of the sales representative – Robert King
 `Robert Sales = CALCULATE([Total Sales], New_order_table[EmployeeID] = 7)`
 
 ## Data Analysis and Visualization:
@@ -115,9 +115,9 @@ Revenue showed an upward trend on average from July 2013 to April 2015, however 
 
 ### Top 3 companies by Country
 Using the country filter, this gives us the top 3 companies by each country with reference to total sales generated. The chart provides insight on the revenue generated and freight spent by the top 3 companies. Overall the top 3 companies are:
-•	QUICK-Stop (Germany): $110,277.31
-•	Ernst Handel (Austria): $104,874.98
-•	Save-a-lot Markets (USA): $104,361.95
+-	QUICK-Stop (Germany): $110,277.31
+-	Ernst Handel (Austria): $104,874.98
+-	Save-a-lot Markets (USA): $104,361.95
 ![top 3 companies](https://github.com/ChrisDataGuy/MAVEN-NORTHWIND-CHALLENGE/assets/109347195/eb4926b1-6497-4abf-bf1d-cbfecfab1483)
 
 ### Average Revenue per Order vs Average Shipment cost per Order by Country
@@ -134,15 +134,15 @@ In terms of shipping cost, to maximize revenue more orders should go through the
 
 ### Sales managers and Sales Representatives
 The Vice President of the sales department  - Andrew Fuller overseas the affairs of two sales teams:
-•	The sales team in the USA led by the sales manager – Laura Callahan, consisting of three (3) sales representatives – Nancy Davolio, Janet Leverling and Margaret Peacock.
-•	The sales team in the UK, led by the sales manager – Steven Buchanan, consisting of three (3) sales representatives – Michael Suyama, Robert King and Anne Dodsworth. 
+-	The sales team in the USA led by the sales manager – Laura Callahan, consisting of three (3) sales representatives – Nancy Davolio, Janet Leverling and Margaret Peacock.
+-	The sales team in the UK, led by the sales manager – Steven Buchanan, consisting of three (3) sales representatives – Michael Suyama, Robert King and Anne Dodsworth. 
 The USA team contributed 59.63% of total sales while the UK team contributed 27.22% of total sales and 13.15% came from Andrew Fuller.
 Below is the sales generated by each sales representative in descending order:
-•	Margaret Peacock: $232,891
-•	Janet Leverling: $202,813
-•	Nancy Davolio: $192,108
-•	Robert King: $77,308
-•	Michael Suyama: $73,913
+-	Margaret Peacock: $232,891
+-	Janet Leverling: $202,813
+-	Nancy Davolio: $192,108
+-	Robert King: $77,308
+-	Michael Suyama: $73,913
 ![sales managers contribution](https://github.com/ChrisDataGuy/MAVEN-NORTHWIND-CHALLENGE/assets/109347195/6133582c-6f13-468d-a182-a5278096d594)
 ![sales reps](https://github.com/ChrisDataGuy/MAVEN-NORTHWIND-CHALLENGE/assets/109347195/ca506b00-b53e-4837-b855-0b91e2dc9c8c)
 
@@ -156,10 +156,10 @@ A table summarizing some of the key metrics for each country a glance:
 
 ### Insights and Recommendations
 In addition to the insights provided above, here are some insights and recommendations from the analysis:
-•	Germany represents the best market outside of the USA with a total revenue of $192k and contributing 20% of sales of the topline product category - Beverages. This is further emphasized by the fact that QUICK - Stop is the best performing customer, contributing 47% of total sales in Germany. To maximize profitability and grow revenue, there is need to leverage on the already established market in Germany to drive sales of Meat and Poultry, as it is the category that provides the best revenue per order, with an average of $902.19 and an average order value of $1,012. This can be replicated in the other countries - Austria and USA, that make up the top 3 markets.
-•	The Austria and Ireland markets present opportunities to boost revenue and profitability by leveraging on the price point there. The average revenue per order of $2,506.81 and $2,250.81 respectively outweigh shipment costs. Leveraging on these price points, we can drive the sales of Beverages, Dairy Products and Confections. Attract more customers/partners in Austria as its just 2 customers there.
-•	In terms of shipping, Federal Shipping provides the best shipping company and plan, while they provide the second best Average fulfillment cost per order of $248.80, putting customer satisfaction at forefront, they provide the best average delivery time  of 7.42 days. The low average shipping cost of Speedy Express can be used to reduce the cost of freight for countries like Austria and Ireland where the cost of freight is already too high, this will in turn improve revenue.
-•	A deep dive into the UK team led by Steven Buchanan is recommended to understand the possible challenges of the team and plan to improve on their 27.22% contribution to total sales. Brand promotions, strategic drive of bestselling products using incentives and most likely personnel change is advised. Laura Callahan and the US team are doing a great job contributing 59.62% of total sales, we must on ride this wave by motivating the team by acknowledgements and recognitions and also copying best practice.
+-	Germany represents the best market outside of the USA with a total revenue of $192k and contributing 20% of sales of the topline product category - Beverages. This is further emphasized by the fact that QUICK - Stop is the best performing customer, contributing 47% of total sales in Germany. To maximize profitability and grow revenue, there is need to leverage on the already established market in Germany to drive sales of Meat and Poultry, as it is the category that provides the best revenue per order, with an average of $902.19 and an average order value of $1,012. This can be replicated in the other countries - Austria and USA, that make up the top 3 markets.
+-	The Austria and Ireland markets present opportunities to boost revenue and profitability by leveraging on the price point there. The average revenue per order of $2,506.81 and $2,250.81 respectively outweigh shipment costs. Leveraging on these price points, we can drive the sales of Beverages, Dairy Products and Confections. Attract more customers/partners in Austria as its just 2 customers there.
+-	In terms of shipping, Federal Shipping provides the best shipping company and plan, while they provide the second best Average fulfillment cost per order of $248.80, putting customer satisfaction at forefront, they provide the best average delivery time  of 7.42 days. The low average shipping cost of Speedy Express can be used to reduce the cost of freight for countries like Austria and Ireland where the cost of freight is already too high, this will in turn improve revenue.
+-	A deep dive into the UK team led by Steven Buchanan is recommended to understand the possible challenges of the team and plan to improve on their 27.22% contribution to total sales. Brand promotions, strategic drive of bestselling products using incentives and most likely personnel change is advised. Laura Callahan and the US team are doing a great job contributing 59.62% of total sales, we must on ride this wave by motivating the team by acknowledgements and recognitions and also copying best practice.
 
 Here is our full dashboard of two pages:
 
