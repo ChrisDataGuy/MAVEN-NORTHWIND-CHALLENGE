@@ -104,7 +104,7 @@ CALCULATE([Total Sales], New_order_table[EmployeeID] = 5) +
 
 ## Data Analysis and Visualization:
 ### Top Metrics
-The Top metrics showed that we wad $1.27 million  in total sales, with 84% revenue at $1.06 million, shipment accounted for the remainder of $207K. 830 orders were generated which led to the sales of 51,317 units of different products, with an average order value of $1,525.05 and average revenue per order of $1,275.29. The business currently supplies to 89 different customers across 21 countries and 69 cities, supplying a total of 69 active products currently. Delivery is handled by 3 shipping companies at an average order fulfillment cost of $249.77 and an average delivery time of 8.06 days, delays in order delivery averaged at 0.26days.
+The Top metrics showed that we had $1.27 million  in total sales, with 84% revenue at $1.06 million, shipment accounted for the remainder of $207K. 830 orders were generated which led to the sales of 51,317 units of different products, with an average order value of $1,525.05 and average revenue per order of $1,275.29. The business currently supplies to 89 different customers across 21 countries and 69 cities, supplying a total of 69 active products currently. Delivery is handled by 3 shipping companies at an average order fulfillment cost of $249.77 and an average delivery time of 8.06 days, delays in order delivery averaged at 0.26days.
 
 ![Top metrics](https://github.com/ChrisDataGuy/MAVEN-NORTHWIND-CHALLENGE/assets/109347195/efdc740b-b37b-48f6-89ad-c1d1c26db9a8)
 
